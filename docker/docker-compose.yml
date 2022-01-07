@@ -1,0 +1,33 @@
+version: '3.5'
+services:
+  web:
+    build: ./docker_alma
+    hostname: tcc-dm-web-server
+    container_name: tcc-dm-web
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+    - "80:80"
+    restart: always
+    volumes:
+    - ../:/var/www/app
+    privileged: true
+    entrypoint: ["/usr/sbin/init"]
+
+  db:
+    build: ./docker_mysql
+    hostname: tcc-dm-db-server
+    container_name: tcc-dm-db
+    ports:
+    - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: tcc-dm
+      MYSQL_USER: app
+      MYSQL_PASSWORD: tcc-dm
+      MYSQL_ROOT_PASSWORD: tcc-dm
+      TZ: Asia/Tokyo
+    volumes:
+      - ./docker_mysql/initdb:/docker-entrypoint-initdb.d
+      - ../db:/var/lib/mysql
+    privileged: true
